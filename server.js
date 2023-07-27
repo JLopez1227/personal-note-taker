@@ -2,7 +2,7 @@ const express = require('express');
 const path = require('path');
 const fs = require('fs')
 const util = require('util')
-const dbData = require('./db/db.json');
+const { v4: uuidv4 } = require('uuid');
 const dbPath = './db/db.json'
 const PORT = process.env.PORT || 3001 ;
 const readFileAsync = util.promisify(fs.readFile);
@@ -31,7 +31,7 @@ app.get('/api/notes', (req, res) => {
 
 app.post('/api/notes', (req, res) => {
   readFileAsync(dbPath, 'utf8').then(notes => {
-    writeFileAsync(dbPath, JSON.stringify([...JSON.parse(notes), req.body])).then(data => {
+    writeFileAsync(dbPath, JSON.stringify([...JSON.parse(notes), {...req.body, id: uuidv4()}])).then(data => {
       return res.json({
         message: 'Note successfully added!'
       })
